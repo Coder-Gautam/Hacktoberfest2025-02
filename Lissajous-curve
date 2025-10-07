@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+a = 1
+b = 1
+delta = np.pi / 2
+freq_x = 3
+freq_y = 2
+t_max = 4 * np.pi
+num_points = 1000
+
+t = np.linspace(0, t_max, num_points)
+
+x_full = a * np.sin(freq_x * t + delta)
+y_full = b * np.cos(freq_y * t)
+
+fig, ax = plt.subplots(figsize=(10, 10), facecolor='black')
+ax.set_xlim(-1.5, 1.5)
+ax.set_ylim(-1.5, 1.5)
+ax.set_aspect('equal')
+ax.axis('off')
+
+colors = plt.cm.plasma(np.linspace(0, 1, num_points))
+
+line, = ax.plot([], [], color='white', lw=2, alpha=0.8)
+point, = ax.plot([], [], 'o', color='cyan', markersize=8)
+
+trail_length = 200
+frame_interval = 20
+
+def animate(frame):
+idx = frame % num_points
+curr_x = x_full[idx]
+curr_y = y_full[idx]
+
+start_idx = max(0, idx - trail_length)
+line.set_data(x_full[start_idx:idx+1], y_full[start_idx:idx+1])
+line.set_color(colors[start_idx:idx+1])
+
+point.set_data([curr_x], [curr_y])
+
+return line, point
+
+anim = FuncAnimation(fig, animate, frames=num_points, interval=frame_interval, blit=True, repeat=True)
+
+plt.tight_layout()
+plt.show()
